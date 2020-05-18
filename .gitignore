@@ -1,0 +1,4 @@
+/covid19-kafka.iml
+/.idea/
+/covid19-avro-schemas/target/
+/covid19-statistics-producer/target/
