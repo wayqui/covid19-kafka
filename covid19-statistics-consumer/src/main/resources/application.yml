@@ -1,0 +1,26 @@
+server:
+  port: 8087
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles: local
+  data:
+    mongodb:
+      port: 27017
+      host: localhost
+      database: transaq
+  kafka:
+    template:
+      default-topic: covid-daily-stats
+    consumer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: kafka-consumer-group
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+

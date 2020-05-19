@@ -11,6 +11,8 @@
     <modules>
         <module>covid19-statistics-producer</module>
         <module>covid19-avro-schemas</module>
+        <module>covid19-statistics-consumer</module>
+        <module>common-library</module>
     </modules>
 
 
