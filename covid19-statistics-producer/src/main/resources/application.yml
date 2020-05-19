@@ -1,0 +1,17 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /covid19api
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles: local
+  kafka:
+    template:
+      default-topic: covid-daily-stats
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer

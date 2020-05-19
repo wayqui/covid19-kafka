@@ -1,4 +1,4 @@
-package com.wayqui.covid19.producer;
+package com.wayqui.covid19;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
