@@ -13,6 +13,7 @@
         <module>covid19-avro-schemas</module>
         <module>covid19-statistics-consumer</module>
         <module>common-library</module>
+        <module>covid19-statistics-streams</module>
     </modules>
 
 
