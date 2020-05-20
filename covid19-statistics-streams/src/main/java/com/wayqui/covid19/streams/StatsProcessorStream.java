@@ -30,23 +30,67 @@ public class StatsProcessorStream {
         KStream<Long, String> stream = kStreamBuilder
                 .stream("covid-daily-stats", Consumed.with(Serdes.Long(), Serdes.String()));
 
-        stream
+        KStream<String, Long> confirmedPerDayStream = stream
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");                    dto.getDate().format(formatter);
-                    return new KeyValue<>(dto.getDate().format(formatter), dto.getActive());
-                })
-                .peek((k, v) -> log.info("Before aggregate {}=>{}", k, v))
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    return new KeyValue<>(dto.getDate().format(formatter), dto.getConfirmed());
+                });
+
+        KStream<String, Long> recoveredPerDayStream = stream
+                .map((k, v) -> {
+                    Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    return new KeyValue<>(dto.getDate().format(formatter), dto.getRecovered());
+                });
+
+        KStream<String, Long> deathPerDayStream = stream
+                .map((k, v) -> {
+                    Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    return new KeyValue<>(dto.getDate().format(formatter), dto.getDeaths());
+                });
+
+        KStream<String, Long> confirmedPerCountryStream = stream
+                .map((k, v) -> {
+                    Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
+                    return new KeyValue<>(dto.getCountry(), dto.getConfirmed());
+                });
+
+        KStream<String, Long> recoveredPerCountryStream = stream
+                .map((k, v) -> {
+                    Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
+                    return new KeyValue<>(dto.getCountry(), dto.getRecovered());
+                });
+
+        KStream<String, Long> deathPerCountryStream = stream
+                .map((k, v) -> {
+                    Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
+                    return new KeyValue<>(dto.getCountry(), dto.getDeaths());
+                });
+
+        this.aggregateStats(confirmedPerDayStream, "count-confirmed-per-day", "confirmed-per-day");
+        this.aggregateStats(recoveredPerDayStream, "count-recovered-per-day", "recovered-per-day");
+        this.aggregateStats(deathPerDayStream, "count-death-per-day", "death-per-day");
+
+        this.aggregateStats(confirmedPerCountryStream, "count-confirmed-per-country", "confirmed-per-country");
+        this.aggregateStats(recoveredPerCountryStream, "count-recovered-per-country", "recovered-per-country");
+        this.aggregateStats(deathPerCountryStream, "count-death-per-country", "death-per-country");
+
+        return stream;
+    }
+
+    private void aggregateStats(KStream<String, Long> kafkaStream, String materialized, String outputTopic) {
+        kafkaStream
+                .peek((k, v) -> log.info("{} Stream: {}=>{}", outputTopic, k, v))
                 .groupByKey()
                 .aggregate(
                         () -> 0L, /* initializer */
                         (aggKey, newValue, aggValue) -> aggValue + newValue, /* adder */
-                        Materialized.as("count-per-day") /* state store name */
+                        Materialized.as(materialized) /* state store name */
                 )
                 .toStream()
-                .peek((k, v) -> log.info("After aggregate {}=>{}", k, v))
-                .to("confirmed-per-day", Produced.with(Serdes.String(), Serdes.Long()));
+                .to(outputTopic, Produced.with(Serdes.String(), Serdes.Long()));
 
-        return stream;
     }
 }

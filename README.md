@@ -25,4 +25,4 @@
 * Configure manual retries and recovery of the messages for the consumer.
 * Unit test and integration tests 
 * Add Swagger-UI api documentation and generate a client.
-
+* Generate Id for message (in order to avoid duplicates)
