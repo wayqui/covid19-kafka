@@ -31,21 +31,24 @@ public class Covid19ApiClientApplication {
     public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
         return args -> {
             ApiStatisticResponse[] responses = restTemplate.getForObject(
-                    "https://api.covid19api.com/all", ApiStatisticResponse[].class);
+                    "https://api.covid19api.com/country/peru", ApiStatisticResponse[].class);
 
             if (responses != null) {
                 for (ApiStatisticResponse response : responses) {
                     log.info(response.toString());
 
                     Covid19StatDto covid19StatDto = new Covid19StatDto();
-                    covid19StatDto.setActive(response.getActive());
-                    covid19StatDto.setCity(response.getCity());
-                    covid19StatDto.setCityCode(response.getCityCode());
-                    covid19StatDto.setConfirmed(response.getConfirmed());
                     covid19StatDto.setCountry(response.getCountry());
                     covid19StatDto.setCountryCode(response.getCountryCode());
+                    covid19StatDto.setProvince(response.getProvince());
+                    covid19StatDto.setCity(response.getCity());
+                    covid19StatDto.setCityCode(response.getCityCode());
+                    covid19StatDto.setLatitude(new Float(response.getLat()));
+                    covid19StatDto.setLongitude(new Float(response.getLon()));
                     covid19StatDto.setConfirmed(response.getConfirmed());
+                    covid19StatDto.setRecovered(response.getRecovered());
                     covid19StatDto.setDeaths(response.getDeaths());
+                    covid19StatDto.setActive(response.getActive());
                     covid19StatDto.setDate(response.getDate().toInstant()
                             .atZone(ZoneId.systemDefault())
                             .toLocalDateTime());

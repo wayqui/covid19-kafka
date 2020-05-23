@@ -17,6 +17,8 @@ import org.springframework.kafka.annotation.EnableKafkaStreams;
 
 import java.time.format.DateTimeFormatter;
 
+import static com.wayqui.covid19.streams.config.Constants.*;
+
 @Configuration
 @EnableKafka
 @EnableKafkaStreams
@@ -24,13 +26,14 @@ import java.time.format.DateTimeFormatter;
 public class StatsProcessorStream {
 
     @Bean
-    public KStream<Long, String> kStream(StreamsBuilder kStreamBuilder) {
+    public KStream<String, String> kStream(StreamsBuilder kStreamBuilder) {
         log.info("Processing kstream...");
 
-        KStream<Long, String> stream = kStreamBuilder
-                .stream("covid-daily-stats", Consumed.with(Serdes.Long(), Serdes.String()));
+        KStream<String, String> stream = kStreamBuilder
+                .stream("covid-daily-stats", Consumed.with(Serdes.String(), Serdes.String()));
 
         KStream<String, Long> confirmedPerDayStream = stream
+                .peek((k, v) -> log.info("confirmedPerDayStream {}=>{}", k, v))
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -38,6 +41,7 @@ public class StatsProcessorStream {
                 });
 
         KStream<String, Long> recoveredPerDayStream = stream
+                .peek((k, v) -> log.info("recoveredPerDayStream {}=>{}", k, v))
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -45,6 +49,7 @@ public class StatsProcessorStream {
                 });
 
         KStream<String, Long> deathPerDayStream = stream
+                .peek((k, v) -> log.info("deathPerDayStream {}=>{}", k, v))
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -52,30 +57,33 @@ public class StatsProcessorStream {
                 });
 
         KStream<String, Long> confirmedPerCountryStream = stream
+                .peek((k, v) -> log.info("confirmedPerCountryStream {}=>{}", k, v))
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
                     return new KeyValue<>(dto.getCountry(), dto.getConfirmed());
                 });
 
         KStream<String, Long> recoveredPerCountryStream = stream
+                .peek((k, v) -> log.info("recoveredPerCountryStream {}=>{}", k, v))
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
                     return new KeyValue<>(dto.getCountry(), dto.getRecovered());
                 });
 
         KStream<String, Long> deathPerCountryStream = stream
+                .peek((k, v) -> log.info("deathPerCountryStream {}=>{}", k, v))
                 .map((k, v) -> {
                     Covid19StatDto dto = new Gson().fromJson(v, Covid19StatDto.class);
                     return new KeyValue<>(dto.getCountry(), dto.getDeaths());
                 });
 
-        this.aggregateStats(confirmedPerDayStream, "count-confirmed-per-day", "confirmed-per-day");
-        this.aggregateStats(recoveredPerDayStream, "count-recovered-per-day", "recovered-per-day");
-        this.aggregateStats(deathPerDayStream, "count-death-per-day", "death-per-day");
+        this.aggregateStats(confirmedPerDayStream, "count-confirmed-per-day", confirmedPerDayTopic);
+        this.aggregateStats(recoveredPerDayStream, "count-recovered-per-day", recoveredPerDayTopic);
+        this.aggregateStats(deathPerDayStream, "count-death-per-day", deathPerDayTopic);
 
-        this.aggregateStats(confirmedPerCountryStream, "count-confirmed-per-country", "confirmed-per-country");
-        this.aggregateStats(recoveredPerCountryStream, "count-recovered-per-country", "recovered-per-country");
-        this.aggregateStats(deathPerCountryStream, "count-death-per-country", "death-per-country");
+        this.aggregateStats(confirmedPerCountryStream, "count-confirmed-per-country", confirmedPerCountryTopic);
+        this.aggregateStats(recoveredPerCountryStream, "count-recovered-per-country", recoveredPerCountryTopic);
+        this.aggregateStats(deathPerCountryStream, "count-death-per-country", deathPerCountryTopic);
 
         return stream;
     }

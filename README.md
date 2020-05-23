@@ -6,6 +6,18 @@
 
 ### Kafka cluster, zookeeper and schema registry 
 
+
+```Shell
+kafka-topics --topic covid-daily-stats --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-accumulate-stats --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-confirmed-per-country --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-recovered-per-country --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-dead-per-country --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-confirmed-per-day --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-recovered-per-day --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+kafka-topics --topic covid-dead-per-day --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1
+```
+
 ### Project Modules
 
 #### covid19-statistics-producer
