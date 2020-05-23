@@ -15,6 +15,7 @@
         <module>common-library</module>
         <module>covid19-statistics-streams</module>
         <module>covid19-api-client</module>
+        <module>covid19-daily-stats-streams</module>
     </modules>
 
 
