@@ -1,7 +1,6 @@
 package com.wayqui.covid19.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,28 +12,28 @@ import java.util.Date;
 @AllArgsConstructor
 public class ApiStatisticResponse {
 
-    @JsonProperty("Country")
+    @SerializedName("Country")
     private String country;
-    @JsonProperty("CountryCode")
+    @SerializedName("CountryCode")
     private String countryCode;
-    @JsonProperty("Province")
+    @SerializedName("Province")
     private String province;
-    @JsonProperty("City")
+    @SerializedName("City")
     private String city;
-    @JsonProperty("CityCode")
+    @SerializedName("CityCode")
     private String cityCode;
-    @JsonProperty("Lat")
+    @SerializedName("Lat")
     private String lat;
-    @JsonProperty("Lon")
+    @SerializedName("Lon")
     private String lon;
-    @JsonProperty("Confirmed")
+    @SerializedName("Confirmed")
     private Long confirmed;
-    @JsonProperty("Deaths")
+    @SerializedName("Deaths")
     private Long deaths;
-    @JsonProperty("Recovered")
+    @SerializedName("Recovered")
     private Long recovered;
-    @JsonProperty("Active")
+    @SerializedName("Active")
     private Long active;
-    @JsonProperty("Date")
+    @SerializedName("Date")
     private Date date;
 }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
@@ -37,7 +38,6 @@ public class DailyDataGeneratorStream {
                 Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(keyValueStore),
                         Serdes.String(),
                         Serdes.String());
-
         kStreamBuilder.addStateStore(keyValueStoreBuilder);
 
         KStream<String, String> stream = kStreamBuilder
@@ -56,20 +56,21 @@ public class DailyDataGeneratorStream {
 
             @Override
             public String transform(String key, String value) {
-                String newValue = value;
-
-                if (state.get(key) != null) {
-                    Covid19StatDto prevDto = new Gson().fromJson(state.get(key), Covid19StatDto.class);
-                    Covid19StatDto dto = new Gson().fromJson(value, Covid19StatDto.class);
-
-                    dto.setConfirmed(dto.getConfirmed() - prevDto.getConfirmed());
-                    dto.setActive(dto.getActive() - prevDto.getActive());
-                    dto.setDeaths(dto.getDeaths() - prevDto.getDeaths());
-
-                    newValue = new Gson().toJson(dto);
+                log.info("transform {}, {}", key, value);
+                if (state.get(key) == null) {
+                    state.put(key, value);
+                    return value;
                 }
-                state.put(key, value);
-                return newValue;
+
+                Covid19StatDto prevDto = new Gson().fromJson(state.get(key), Covid19StatDto.class);
+                Covid19StatDto dto = new Gson().fromJson(value, Covid19StatDto.class);
+
+                dto.setConfirmed(dto.getConfirmed() - prevDto.getConfirmed());
+                dto.setRecovered(dto.getRecovered() - prevDto.getRecovered());
+                dto.setDeaths(dto.getDeaths() - prevDto.getDeaths());
+                dto.setActive(dto.getActive() - prevDto.getActive());
+
+                return new Gson().toJson(dto);
             }
 
             @Override

@@ -1,0 +1,44 @@
+[
+  {
+    "Country": "Peru",
+    "CountryCode": "PE",
+    "Province": "",
+    "City": "",
+    "CityCode": "",
+    "Lat": "-9.19",
+    "Lon": "-75.02",
+    "Confirmed": 10,
+    "Deaths": 1,
+    "Recovered": 2,
+    "Active": 0,
+    "Date": "2020-01-22T00:00:00Z"
+  },
+  {
+    "Country": "Peru",
+    "CountryCode": "PE",
+    "Province": "",
+    "City": "",
+    "CityCode": "",
+    "Lat": "-9.19",
+    "Lon": "-75.02",
+    "Confirmed": 13,
+    "Deaths": 5,
+    "Recovered": 7,
+    "Active": 0,
+    "Date": "2020-01-23T00:00:00Z"
+  },
+  {
+    "Country": "Ecuador",
+    "CountryCode": "EC",
+    "Province": "",
+    "City": "",
+    "CityCode": "",
+    "Lat": "-9.19",
+    "Lon": "-75.02",
+    "Confirmed": 2,
+    "Deaths": 1,
+    "Recovered": 1,
+    "Active": 0,
+    "Date": "2020-01-22T00:00:00Z"
+  }
+]

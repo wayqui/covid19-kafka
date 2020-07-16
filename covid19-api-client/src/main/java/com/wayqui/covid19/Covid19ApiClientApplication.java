@@ -1,7 +1,6 @@
 package com.wayqui.covid19;
 
 import com.wayqui.covid19.api.ApiStatisticResponse;
-import com.wayqui.covid19.api.StatisticsListResponse;
 import com.wayqui.covid19.dto.Covid19StatDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -11,7 +10,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @SpringBootApplication
